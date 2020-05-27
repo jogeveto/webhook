@@ -10,19 +10,53 @@ const
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
 // Creates the endpoint for our webhook 
-app.post('/webhook', (req, res) => {  
- 
+app.post('/webhook', (req, res) => {
+
   let body = req.body;
 
   // Checks this is an event from a page subscription
   if (body.object === 'page') {
 
     // Iterates over each entry - there may be multiple if batched
-    body.entry.forEach(function(entry) {
+    body.entry.forEach(function (entry) {
 
       // Gets the message. entry.messaging is an array, but 
       // will only ever contain one message, so we get index 0
       let webhook_event = entry.messaging[0];
+      //Consumo de WebApi
+      var url = "http://190.145.153.51/envia";
+      var Request = require("request");
+      let fecha = Date.now();
+      Request.post({
+        "headers": { "content-type": "application/json" },
+        "url": url,
+        "body": JSON.stringify({
+          "nombres": "Yesika Facebook", 
+          "apellidos": "Gonzalez", 
+          "cedula": "213123123", 
+          "ciudad": "Medellin", 
+          "email": "mail@gmail.com",         
+          "tipo_telefono": 1, 
+          "telefono": "3324324232", 
+          "extension": "", 
+          "producto": "", 
+          "optin": 1, 
+          "glid": "", 
+          "utm_source": "fuente", 
+          "utm_campaign": "campana", 
+          "utm_medium": "medio", 
+          "queu_promo": "James", 
+          "referencia_producto": "postpago_Inesperado_3,5GB", 
+          "canal_trafico": "Referido", 
+          "resumen_plan": "Info Plan"
+        })
+      }, (error, response, body) => {
+        if (error) {
+          return console.dir(error);
+        }
+        console.dir(JSON.parse(body));
+      });
+
       console.log(webhook_event);
     });
 
@@ -40,25 +74,25 @@ app.get('/webhook', (req, res) => {
 
   // Your verify token. Should be a random string.
   let VERIFY_TOKEN = "Astbmxo33*_."
-    
+
   // Parse the query params
   let mode = req.query['hub.mode'];
   let token = req.query['hub.verify_token'];
   let challenge = req.query['hub.challenge'];
-    
+
   // Checks if a token and mode is in the query string of the request
   if (mode && token) {
-  
+
     // Checks the mode and token sent is correct
     if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-      
+
       // Responds with the challenge token from the request
       console.log('WEBHOOK_VERIFIED');
       res.status(200).send(challenge);
-    
+
     } else {
       // Responds with '403 Forbidden' if verify tokens do not match
-      res.sendStatus(403);      
+      res.sendStatus(403);
     }
   }
 });
