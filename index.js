@@ -26,30 +26,11 @@ app.post('/webhook', (req, res) => {
       //Consumo de WebApi
       var url = "http://190.145.153.51/envia";
       var Request = require("request");
-      let fecha = Date.now();
+      let menssageText = event.message.text;
       Request.post({
         "headers": { "content-type": "application/json" },
         "url": url,
-        "body": JSON.stringify({
-          "nombres": "Yesika Facebook", 
-          "apellidos": "Gonzalez", 
-          "cedula": "213123123", 
-          "ciudad": "Medellin", 
-          "email": "mail@gmail.com",         
-          "tipo_telefono": 1, 
-          "telefono": "3324324232", 
-          "extension": "", 
-          "producto": "", 
-          "optin": 1, 
-          "glid": "", 
-          "utm_source": "fuente", 
-          "utm_campaign": "campana", 
-          "utm_medium": "medio", 
-          "queu_promo": "James", 
-          "referencia_producto": "postpago_Inesperado_3,5GB", 
-          "canal_trafico": "Referido", 
-          "resumen_plan": "Info Plan"
-        })
+        "body": menssageText
       }, (error, response, body) => {
         if (error) {
           return console.dir(error);
